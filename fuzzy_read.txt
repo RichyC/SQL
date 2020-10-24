@@ -1,0 +1,158 @@
+SQL> select * from tweets;
+
+  TWEETNUM TWEETDATE USERNAME                                                   
+---------- --------- --------------------                                       
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+         1           rcastro2                                                   
+row 1 changed                                                                   
+                                                                                
+         3           rcastro2                                                   
+204 is changed                                                                  
+                                                                                
+         5 06-DEC-19 rcastro2                                                   
+204 is changed                                                                  
+                                                                                
+
+  TWEETNUM TWEETDATE USERNAME                                                   
+---------- --------- --------------------                                       
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+       203 06-DEC-19 Dr. P                                                      
+203 is the only row changed                                                     
+                                                                                
+       204 06-DEC-19 Dr. P                                                      
+204 is the only changed row                                                     
+                                                                                
+
+SQL> select * from tweets;
+
+  TWEETNUM TWEETDATE USERNAME                                                   
+---------- --------- --------------------                                       
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+         1           rcastro2                                                   
+new changed row                                                                 
+                                                                                
+         3           rcastro2                                                   
+204 is changed                                                                  
+                                                                                
+         5 06-DEC-19 rcastro2                                                   
+204 is changed                                                                  
+                                                                                
+
+  TWEETNUM TWEETDATE USERNAME                                                   
+---------- --------- --------------------                                       
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+       203 06-DEC-19 Dr. P                                                      
+203 is the only row changed                                                     
+                                                                                
+       204 06-DEC-19 Dr. P                                                      
+204 is the only changed row                                                     
+                                                                                
+
+SQL> set transaction isolation level serializable;
+
+Transaction set.
+
+SQL> select * from tweets;
+
+  TWEETNUM TWEETDATE USERNAME                                                   
+---------- --------- --------------------                                       
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+         1           rcastro2                                                   
+new changed row                                                                 
+                                                                                
+         3           rcastro2                                                   
+204 is changed                                                                  
+                                                                                
+         5 06-DEC-19 rcastro2                                                   
+204 is changed                                                                  
+                                                                                
+
+  TWEETNUM TWEETDATE USERNAME                                                   
+---------- --------- --------------------                                       
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+       203 06-DEC-19 Dr. P                                                      
+203 is the only row changed                                                     
+                                                                                
+       204 06-DEC-19 Dr. P                                                      
+204 is the only changed row                                                     
+                                                                                
+
+SQL> select * from tweets;
+
+  TWEETNUM TWEETDATE USERNAME                                                   
+---------- --------- --------------------                                       
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+         1           rcastro2                                                   
+new changed row                                                                 
+                                                                                
+         3           rcastro2                                                   
+204 is changed                                                                  
+                                                                                
+         5 06-DEC-19 rcastro2                                                   
+204 is changed                                                                  
+                                                                                
+
+  TWEETNUM TWEETDATE USERNAME                                                   
+---------- --------- --------------------                                       
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+       203 06-DEC-19 Dr. P                                                      
+203 is the only row changed                                                     
+                                                                                
+       204 06-DEC-19 Dr. P                                                      
+204 is the only changed row                                                     
+                                                                                
+
+SQL> UPDATE tweets
+  2  set tweettext = 'third changed row'
+  3  where tweetnum = 3;
+UPDATE tweets
+       *
+ERROR at line 1:
+ORA-01013: user requested cancel of current operation 
+
+
+
+SQL> 
+SQL> UPDATE tweets
+  2  set tweettext = 'third changed row'
+  3  where tweetnum = 3;
+UPDATE tweets
+       *
+ERROR at line 1:
+ORA-01013: user requested cancel of current operation 
+
+
+
+SQL> 
+SQL> UPDATE tweets
+  2  set tweettext = 'third changed row'
+  3  where tweetnum = 3;
+UPDATE tweets
+*
+ERROR at line 1:
+ORA-01013: user requested cancel of current operation 
+
+
+
+SQL> UPDATE tweets
+  2  set tweettext =
+  3  
+SQL> UPDATE tweets
+  2  set tweettext = 'third row changed'
+  3  where tweetnum = 3;
+UPDATE tweets
+       *
+ERROR at line 1:
+ORA-01013: user requested cancel of current operation 
+
+
+
+SQL> spool off

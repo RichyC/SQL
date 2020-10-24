@@ -1,0 +1,53 @@
+-- Query 1 
+-- Write an sql statement that simulates the divide finding the DonorId of any donor that     
+-- has given to all Charities.
+WITH CharityCount AS
+(SELECT Count(Name) AS NumOfCharities FROM Donations.Charities),
+GroupedDonations AS
+(SELECT DonorID, Charity
+FROM Donations.Donations
+GROUP BY Charity, DonorID
+ORDER BY DonorID),
+CharityDonationCount AS
+(SELECT DonorID, COUNT(DonorID) AS NumOfCharities
+FROM GroupedDonations
+GROUP BY DonorID)
+SELECT DonorID
+FROM CharityCount INNER JOIN CharityDonationCount ON CharityCount.NumOfCharities = CharityDonationCount.NumOfCharities;
+
+-- Query 2 
+-- Find the donors, name, phone, and total given to the charity for the top two donors for
+-- each charity
+WITH TotalDonations AS 
+(SELECT DonorID, Charity, SUM(Amount) AS TotalDonated
+FROM Donations.Donations
+GROUP BY DonorID, Charity),
+RankTable AS 
+(SELECT TotalDonations.*, RANK() OVER(PARTITION BY Charity ORDER BY TotalDonated DESC) AS RANK
+FROM TotalDonations)
+SELECT DISTINCT RankTable.DonorID, Name, Phone, RankTable.Charity, TotalDonated
+FROM RankTable INNER JOIN Donations.Donors ON RankTable.DonorID = Donations.Donors.DonorID
+WHERE RankTable.Rank < 3;
+
+-- Query 3
+-- Develop a query that returns all of the donations for each donor in order by donor and 
+-- with each donor chronologically and include a running total of what each donor has given. 
+-- So if a donor has given three $100 donations then the running total would be 100, then
+-- 200, then 300 for those three rows.
+SELECT DonorID, GiftDate, Amount, SUM(Amount) OVER(PARTITION BY DonorID ORDER BY GiftDate ASC) AS Total
+FROM Donations.Donations
+ORDER BY DonorID ASC, GiftDate ASC;
+
+-- Query 4 
+-- Write a query that produces a to 10 list for Men and a top ten list for women based on    
+-- each person's highest ever jump. Include columns for vaulter rank, gender, username,   
+-- first name, last name, meet name, meet date, metric height, and English height.
+WITH PerformanceRanks AS
+(SELECT pv.performances.username, firstname, lastname, performance, gender, meetID, DENSE_RANK() OVER(PARTITION BY GENDER ORDER BY Performance DESC) AS Rank
+FROM pv.performances INNER JOIN pv.vaulters ON pv.performances.username = pv.vaulters.username)
+SELECT PerformanceRanks.username, firstname, lastname, gender, MeetDate, MeetName, PerformanceRanks.performance, EnglishHeight, Rank
+FROM ((PerformanceRanks INNER JOIN pv.meets ON PerformanceRanks.meetid = pv.meets.meetid) INNER JOIN pv.heights ON PerformanceRanks.performance = pv.heights.metricheight)
+WHERE Rank <= 10;
+
+
+

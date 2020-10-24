@@ -1,0 +1,103 @@
+SQL> select * from tweets;
+
+     TWEETNUM TWEETDATE USERNAME                                                
+------------- --------- --------------------                                    
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+            1           rcastro2                                                
+new changed row                                                                 
+                                                                                
+            3           rcastro2                                                
+second changed row                                                              
+                                                                                
+            5 06-DEC-19 rcastro2                                                
+204 is changed                                                                  
+                                                                                
+
+     TWEETNUM TWEETDATE USERNAME                                                
+------------- --------- --------------------                                    
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+          203 06-DEC-19 Dr. P                                                   
+203 is the only row changed                                                     
+                                                                                
+          204 06-DEC-19 Dr. P                                                   
+204 is the only changed row                                                     
+                                                                                
+
+SQL> UPDATE tweets
+  2  SET tweettext = '204 is changed again'
+  3  WHERE tweetnum = 204;
+
+1 row updated.
+
+SQL> commit
+  2  ;
+
+Commit complete.
+
+SQL> select * from tweets;
+
+     TWEETNUM TWEETDATE USERNAME                                                
+------------- --------- --------------------                                    
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+            1           rcastro2                                                
+new changed row                                                                 
+                                                                                
+            3           rcastro2                                                
+second changed row                                                              
+                                                                                
+            5 06-DEC-19 rcastro2                                                
+204 is changed                                                                  
+                                                                                
+
+     TWEETNUM TWEETDATE USERNAME                                                
+------------- --------- --------------------                                    
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+          203 06-DEC-19 Dr. P                                                   
+203 is the only row changed                                                     
+                                                                                
+          204 06-DEC-19 Dr. P                                                   
+204 is changed again                                                            
+                                                                                
+
+SQL> select ora_rowscn, tweetnum from tweets;
+
+   ORA_ROWSCN      TWEETNUM                                                     
+------------- -------------                                                     
+  32567417431             1                                                     
+  32567417431             3                                                     
+  32567321060             5                                                     
+  32567475895           203                                                     
+  32567475895           204                                                     
+
+SQL> select * from tweets as of scn 32567322162;
+
+     TWEETNUM TWEETDATE USERNAME                                                
+------------- --------- --------------------                                    
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+            1           rcastro2                                                
+204 is changed                                                                  
+                                                                                
+            3           rcastro2                                                
+204 is changed                                                                  
+                                                                                
+            5 06-DEC-19 rcastro2                                                
+204 is changed                                                                  
+                                                                                
+
+     TWEETNUM TWEETDATE USERNAME                                                
+------------- --------- --------------------                                    
+TWEETTEXT                                                                       
+--------------------------------------------------                              
+          203 06-DEC-19 Dr. P                                                   
+203 is the only row changed                                                     
+                                                                                
+          204 06-DEC-19 Dr. P                                                   
+204 is the only changed row                                                     
+                                                                                
+
+SQL> spool off
